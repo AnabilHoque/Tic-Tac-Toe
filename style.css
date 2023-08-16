@@ -10,8 +10,96 @@ html {
 
 body {
     min-height: 100%;
+    margin: 0px;   
+}
+
+/* Initial Screen */
+
+.initial-screen {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.initial-screen .options {
+    text-align: center;
+    background-color: white;
+    margin: 20% auto;
+    padding: 20px;
+    border: 3px solid red;
+    border-radius: 22px;
+    width: 30%;
+}
+
+/* Main Screen */
+
+.main-screen {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+/* Result Message Screen */
+
+.result-message-screen {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.result-message-screen .message {
+    text-align: center;
+    background-color: white;
+    margin: 20% auto;
+    padding: 20px;
+    border: 3px solid red;
+    border-radius: 22px;
+    width: 30%;
+}
+
+/* Header */
+
+header h1 {
+    margin: 0px;
+    padding: 12px;
+    text-align: center;
 }
 
 /* Main */
 
+.main-screen main {
+    display: flex;
+    justify-content: center;
+}
+
+.main-screen .gameboard {
+    display: flex;
+    flex-wrap: wrap;
+    width: 30rem;
+    height: 30rem;
+}
+
+.main-screen .gameboard > div {
+    height: 10rem;
+    width: 10rem;
+    border: 3px solid red;
+}
+
 /* Footer */
+
+.main-screen footer p {
+    font-size: 20px;
+    text-align: center;
+    margin: 0px;
+    padding: 12px;
+}

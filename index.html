@@ -8,6 +8,49 @@
     <title>Tic Tac Toe</title>
 </head>
 <body>
-    <h1>Tic Tac Toe</h1>
+    <div class="initial-screen">
+        <div class="options">
+            <form action="#" method="post">
+                <label for="username">Enter your name:</label>
+                <input type="text" id="username" name="username">
+                <div>
+                    <input type="radio" id="x-symbol" name="symbol" value="X">
+                    <label for="x-symbol">X</label>
+                </div>
+                <div>
+                    <input type="radio" id="o-symbol" name="symbol" value="O">
+                    <label for="o-symbol">O</label>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="main-screen">
+        <header>
+            <h1>Tic Tac Toe</h1>
+        </header>
+        <main>
+            <div class="gameboard">
+                <div class="board-cell"></div>
+                <div class="board-cell"></div>
+                <div class="board-cell"></div>
+                <div class="board-cell"></div>
+                <div class="board-cell"></div>
+                <div class="board-cell"></div>
+                <div class="board-cell"></div>
+                <div class="board-cell"></div>
+                <div class="board-cell"></div>
+            </div>
+        </main>
+        <footer>
+            <p>Copyright &copy; Anabil Hoque</p>
+        </footer>
+    </div>
+    <div class="result-message-screen">
+        <div class="message">
+            <div class="winner-message">You won!</div>
+            <div class="loser-message">You lost!</div>
+        </div>
+    </div>
+    <script src="./tic-tac-toe.js"></script>
 </body>
 </html>
