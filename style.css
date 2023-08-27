@@ -10,96 +10,156 @@ html {
 
 body {
     min-height: 100%;
-    margin: 0px;   
+    margin: 0px;
+    font-family: Arial, Helvetica, sans-serif;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7),
+    rgba(0, 0, 0, 0.7)), url("./images/nordwood-themes.jpg");
+    background-size: cover;
+    background-clip: content-box;
 }
 
-/* Initial Screen */
+.neon-text {
+    color: #fff;
+    text-shadow:
+        0 0 1px #fff,
+        0 0 2px #fff,
+        0 0 6px #fff,
+        0 0 12px #5271ff,
+        0 0 24px #5271ff,
+        0 0 36px #5271ff,
+        0 0 48px #5271ff,
+        0 0 60px #5271ff;
+}
 
-.initial-screen {
-    display: none;
+/* Initial Modal Screen */
+
+.initial-modal-screen {
+    display: block;
     position: fixed;
     z-index: 1;
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgb(0, 0, 0);
-    background-color: rgba(0, 0, 0, 0.4);
 }
 
-.initial-screen .options {
+.initial-modal-screen .game-settings {
+    margin: 5% auto;
+    padding: 40px 80px;
+    min-height: 60%;
+    width: -moz-fit-content;
+    width: fit-content;
+    border: 0.5rem solid #fff;
+    border-radius: 2rem;
+    box-shadow: 0 0 .2rem #fff,
+                0 0 .2rem #fff,
+                0 0 1.2rem #5271ff,
+                0 0 0.2rem #5271ff,
+                0 0 2.2rem #5271ff,
+                inset 0 0 1rem #5271ff;
+}
+
+.initial-modal-screen .game-settings h1 {
+    margin: 0px;
     text-align: center;
-    background-color: white;
-    margin: 20% auto;
-    padding: 20px;
-    border: 3px solid red;
-    border-radius: 22px;
+    font-size: 64px;
+}
+
+.initial-modal-screen .game-settings h2 {
+    margin: 12px 0px;
+    text-align: center;
+    font-size: 36px;
+}
+
+.initial-modal-screen .game-settings h4 {
+    margin: 6px 0px;
+    text-align: center;
+    font-size: 28px;
+}
+
+.initial-modal-screen form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.initial-modal-screen form label {
+    font-size: 22px;
+}
+
+.initial-modal-screen form input[type="text"] {
+    outline: none;
+    width: 250px;
+    font-size: 18px;
+}
+
+.initial-modal-screen form div:nth-child(5), .initial-modal-screen form div:nth-child(6), .initial-modal-screen form div:nth-child(7){
+    display: flex;
+    justify-content: space-between;
+}
+
+.initial-modal-screen form div:last-child {
+    display: flex;
+    justify-content: center;
+}
+
+.initial-modal-screen form button {
     width: 30%;
+    height: 32px;
+    font-size: medium;
+    cursor: pointer;
 }
 
 /* Main Screen */
 
 .main-screen {
+    display: none;
+}
+
+.main-container {
     min-height: 100vh;
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto auto 1fr auto;
 }
 
-/* Result Message Screen */
-
-.result-message-screen {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0, 0, 0);
-    background-color: rgba(0, 0, 0, 0.4);
-}
-
-.result-message-screen .message {
-    text-align: center;
-    background-color: white;
-    margin: 20% auto;
-    padding: 20px;
-    border: 3px solid red;
-    border-radius: 22px;
-    width: 30%;
-}
-
-/* Header */
-
-header h1 {
-    margin: 0px;
-    padding: 12px;
+.main-container h1, .main-container h2 {
     text-align: center;
 }
 
-/* Main */
+.main-container h1 {
+    margin: 10px;
+    font-size: 64px;
+}
 
-.main-screen main {
+.main-container h2 {
+    margin: 5px;
+    font-size: 36px;
+}
+
+main {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
 
-.main-screen .gameboard {
+.gameboard {
     display: flex;
     flex-wrap: wrap;
     width: 30rem;
     height: 30rem;
 }
 
-.main-screen .gameboard > div {
+.gameboard > div {
     height: 10rem;
     width: 10rem;
-    border: 3px solid red;
+    border: 2px solid #5271ff;
 }
 
 /* Footer */
 
-.main-screen footer p {
+footer p {
     font-size: 20px;
     text-align: center;
     margin: 0px;
     padding: 12px;
 }
+

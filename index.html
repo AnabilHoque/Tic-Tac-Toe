@@ -8,47 +8,52 @@
     <title>Tic Tac Toe</title>
 </head>
 <body>
-    <div class="initial-screen">
-        <div class="options">
+    <div class="initial-modal-screen">
+        <div class="game-settings">
+            <h1 class="neon-text">Tic Tac Toe</h1>
             <form action="#" method="post">
-                <label for="username">Enter your name:</label>
-                <input type="text" id="username" name="username">
+                <div><h2 class="neon-text">Game Settings</h2></div>
                 <div>
-                    <input type="radio" id="x-symbol" name="symbol" value="X">
-                    <label for="x-symbol">X</label>
+                    <label for="username1" class="neon-text">Player 1's name:</label>
+                    <input type="text" id="username1" name="username1" placeholder="Player 1">
                 </div>
                 <div>
-                    <input type="radio" id="o-symbol" name="symbol" value="O">
-                    <label for="o-symbol">O</label>
+                    <label for="username2" class="neon-text">Player 2's name:</label>
+                    <input type="text" id="username2" name="username2" placeholder="Player 2">
+                </div>
+                <div><h4 class="neon-text">Game Mode</h4></div>
+                <div>
+                    <label for="hvh" class="neon-text">Human vs Human</label>
+                    <input type="radio" id="hvh" name="game-option" value="hvh" checked>
+                </div>
+                <div>
+                    <label for="hvAIeasy" class="neon-text">Human vs AI (Easy Mode)</label>
+                    <input type="radio" id="hvAIeasy" name="game-option" value="hvAIeasy">
+                </div>
+                <div>
+                    <label for="hvAIhard" class="neon-text">Human vs AI (Hard Mode, Minmax AI)</label>
+                    <input type="radio" id="hvAIhard" name="game-option" value="hvAIhard">
+                </div>
+                <div>
+                    <button type="submit">Start</button>
                 </div>
             </form>
         </div>
     </div>
     <div class="main-screen">
-        <header>
-            <h1>Tic Tac Toe</h1>
-        </header>
-        <main>
-            <div class="gameboard">
-                <div class="board-cell"></div>
-                <div class="board-cell"></div>
-                <div class="board-cell"></div>
-                <div class="board-cell"></div>
-                <div class="board-cell"></div>
-                <div class="board-cell"></div>
-                <div class="board-cell"></div>
-                <div class="board-cell"></div>
-                <div class="board-cell"></div>
-            </div>
-        </main>
-        <footer>
-            <p>Copyright &copy; Anabil Hoque</p>
-        </footer>
-    </div>
-    <div class="result-message-screen">
-        <div class="message">
-            <div class="winner-message">You won!</div>
-            <div class="loser-message">You lost!</div>
+        <div class="main-container">
+            <header>
+                <h1 class="neon-text">Tic Tac Toe</h1>
+            </header>
+            <h2 class="neon-text">It's <span>Player 1</span>'s turn.</h2>
+            <main>
+                <div class="gameboard">
+                    <!--<div class="board-cell"></div>-->
+                </div>
+            </main>
+            <footer>
+                <p class="neon-text">Copyright &copy; Anabil Hoque</p>
+            </footer>
         </div>
     </div>
     <script src="./tic-tac-toe.js"></script>

@@ -1,100 +1,74 @@
+// indicates code should be used in "strict mode" i.e. cannot use undeclared variables
 "use strict";
 
-// Gameboard module
-const gameBoard = (() => {
-    let _arrayBoard = ["", "", "", "", "", "", "", "", ""];
-    
-    const getValueInBoard = (idx) => {
-        if (idx < _arrayBoard.length) {
-            return _arrayBoard[idx]; 
-        } else {
-            throw new Error("Index Error");
-        }
-    };
-    
-    const setValueInBoard = (idx, symbol) => {
-        if (idx < _arrayBoard.length) {
-            _arrayBoard[idx] = symbol;
-        } else {
-            throw new Error("Index Error");
-        }
-    };
+const Gameboard = (() => {
+    let gameboard = ["", "", "", "", "", "", "", "", ""];
 
-    const reset = () => {
-        for (let i = 0; i < _arrayBoard.length; i++) {
-            _arrayBoard[i] = "";
-        }
-    };
+    const displayGameboard = () => {
+        let board = "";
+        gameboard.forEach((value, index) => {
+            board += `<div class="board-cell" id="cell-${index}">${value}</div>`;
+        })
+        document.querySelector(".gameboard").innerHTML = board;
+    }
 
     return {
-        getValueInBoard,
-        setValueInBoard,
-        reset
-    };
+        displayGameboard
+    }
 })();
 
-// Player factory
-const Player = (symbol) => {
-    let _symbol = symbol;
-
-    const getSymbol = () => {
-        return _symbol;
-    };
-
+const Player = (name, symbol) => {
     return {
-        getSymbol
-    };
+        name,
+        symbol
+    }
 }
 
-// gameController module
-const gameController = (() => {
-    const playerX = Player("X");
-    const playerO = Player("O");
-    let isGameFinished = false;
-    let numMoves = 0;
+const Game = (() => {
+    let possibleSymbols = ["X", "O"];
+    let players;
+    let currPlayerIdx;
+    let isGameOver;
 
-    const getCurrentPlayerSymbol = () => {
-        if (numMoves % 2 === 0) {
-            playerX.getSymbol();
-        } else {
-            playerO.getSymbol();
-        }
+    const randomiseSymbols = () => {
+        let player1Idx = Math.floor(Math.random() * 2);
+        let player1Symbol = possibleSymbols[player1Idx];
+        let player2Symbol = player1Symbol === "X" ? "O" : "X";
+        return [player1Symbol, player2Symbol]; 
     };
 
-    const playGame = (idx) => {
-        gameBoard.setValueInBoard(idx, getCurrentPlayerSymbol());
-        if (checkWinner(getCurrentPlayerSymbol())) {
-            isGameFinished = true;
-            console.log(`Winner is player ${getCurrentPlayerSymbol()}`);
-        }
-        if (numMoves === 9) {
-            isGameFinished = true;
-            console.log("Draw");
-        }
-        numMoves++;
+    const initGame = (name1, name2, gameMode) => {
+        let randomSymbols = randomiseSymbols();
+        players = [Player(name1, randomSymbols[0]), Player(name2, randomSymbols[1])];
+        currPlayerIdx = 0;
+        isGameOver = false;
+        Gameboard.displayGameboard();
     };
 
-    const checkWinner = (symbol) => {
-        let symbolIndices = [];
-        for (let i = 0; i < 9; i++) {
-            if (gameBoard.getValueInBoard(i) === symbol) {
-                symbolIndices.push(i);
-            }
-        }
-
-        const winConditions = [
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8],
-            [0, 3, 6],
-            [1, 4, 7],
-            [2, 5, 8],
-            [0, 4, 8],
-            [2, 4, 6],
-        ];
-    };
-
-    const getIsGameFinished = () => {
-        return isGameFinished;
-    };
+    return {
+        initGame
+    }
 })();
+
+function changeDisplayProperty(of, to) {
+    of.style.display = to;
+}
+
+function run() {
+    const startButton = document.querySelector(".game-settings form");
+    const initialModalScreen = document.querySelector(".initial-modal-screen");
+    const mainScreen = document.querySelector(".main-screen");
+    startButton.addEventListener("submit", e => {
+        e.preventDefault();
+        const form = e.target;
+        const allFormElems = form.elements;
+        const username1 = allFormElems[0].value === "" ? "Player 1" : allFormElems[0].value;
+        const username2 = allFormElems[1].value === "" ? "Player 2" : allFormElems[1].value;
+        const gameMode = allFormElems[2].value;
+        changeDisplayProperty(initialModalScreen, "none");
+        changeDisplayProperty(mainScreen, "block");
+        Game.initGame(username1, username2, gameMode);
+    });
+}
+
+run();
