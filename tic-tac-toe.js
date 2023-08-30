@@ -48,11 +48,58 @@ const Player = (name, symbol) => {
     };
 }
 
-// Display Controller Module
+// Display Controller Module (also takes care of forms)
 const DisplayController = (() => {
+    const startButton = document.querySelector(".game-settings form");
+    const initialModalScreen = document.querySelector(".initial-modal-screen");
+    const mainScreen = document.querySelector(".main-screen");
+    const resultModalScreen = document.querySelector(".result-modal-screen");
+    const newGameButton = document.querySelector(".result-modal-screen .message button");
+
+    const displayInit = () => {
+        startButton.addEventListener("submit", processFormInformation);
+        newGameButton.addEventListener("click", resetDisplayAndLogic);
+    };
+
+    const processFormInformation = (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const allFormElems = form.elements;
+        const username1 = allFormElems[0].value === "" ? "Player 1" : allFormElems[0].value;
+        const username2 = allFormElems[1].value === "" ? "Player 2" : allFormElems[1].value;
+        const gameMode = allFormElems[2].value;
+        activateMain();
+        Game.initGame(username1, username2, gameMode);
+    }
+
+    const resetDisplayAndLogic = () => {
+        Game.restartGame();
+        activateForm();
+    }
+
+    const changeDisplayProperty = (of, to) => {
+        of.style.display = to;
+    };
+
+    const activateForm = () => {
+        changeDisplayProperty(initialModalScreen, "block");
+        changeDisplayProperty(mainScreen, "none");
+        changeDisplayProperty(resultModalScreen, "none");
+    }
+
+    const activateMain = () => {
+        changeDisplayProperty(initialModalScreen, "none");
+        changeDisplayProperty(mainScreen, "block");
+        changeDisplayProperty(resultModalScreen, "none");
+    }
+
+    const activateResult = () => {
+        changeDisplayProperty(initialModalScreen, "none");
+        changeDisplayProperty(mainScreen, "none");
+        changeDisplayProperty(resultModalScreen, "block");
+    }
+
     const renderResultMessage = (player1, player2, winnerArgIdx) => {
-        let resultModalScreen = document.querySelector(".result-modal-screen");
-        const mainScreen = document.querySelector(".main-screen");
         let matchText = document.querySelector("#match-text");
         let resultMessage = document.querySelector("#result-message");
         matchText.textContent = `${player1.getName()} - ${player1.getSymbol()} vs ${player2.getName()} - ${player2.getSymbol()}`;
@@ -61,11 +108,11 @@ const DisplayController = (() => {
         } else if (winnerArgIdx === 0 || winnerArgIdx === 1) {
             resultMessage.textContent = winnerArgIdx === 0 ? `${player1.getName()} - ${player1.getSymbol()} wins!` : `${player2.getName()} - ${player2.getSymbol()} wins!`;
         }
-        resultModalScreen.style.display = "block";
-        mainScreen.style.display = "none";
+        activateResult();
     };
 
     return {
+        displayInit,
         renderResultMessage
     };
 })();
@@ -76,6 +123,15 @@ const Game = (() => {
     let players;
     let currPlayerIdx;
     let isGameOver;
+
+    const initGame = (name1, name2, gameMode) => {
+        currPlayerIdx = 0;
+        isGameOver = false;
+        let randomSymbols = randomiseSymbols();
+        players = [Player(name1, randomSymbols[0]), Player(name2, randomSymbols[1])];
+        renderTurnText(players[currPlayerIdx]);
+        Gameboard.renderGameboard();
+    };
 
     const randomiseSymbols = () => {
         let player1Idx = Math.floor(Math.random() * 2);
@@ -89,15 +145,6 @@ const Game = (() => {
         let [nameSpan, symbolSpan] = spanElems;
         nameSpan.textContent = player.getName();
         symbolSpan.textContent = player.getSymbol();
-    };
-
-    const initGame = (name1, name2, gameMode) => {
-        currPlayerIdx = 0;
-        isGameOver = false;
-        let randomSymbols = randomiseSymbols();
-        players = [Player(name1, randomSymbols[0]), Player(name2, randomSymbols[1])];
-        renderTurnText(players[currPlayerIdx]);
-        Gameboard.renderGameboard();
     };
 
     const checkWin = (gameboard) => {
@@ -154,29 +201,13 @@ const Game = (() => {
 
     return {
         initGame,
-        handleClick
+        handleClick,
+        restartGame
     };
 })();
 
-function changeDisplayProperty(of, to) {
-    of.style.display = to;
-}
-
 function run() {
-    const startButton = document.querySelector(".game-settings form");
-    const initialModalScreen = document.querySelector(".initial-modal-screen");
-    const mainScreen = document.querySelector(".main-screen");
-    startButton.addEventListener("submit", e => {
-        e.preventDefault();
-        const form = e.target;
-        const allFormElems = form.elements;
-        const username1 = allFormElems[0].value === "" ? "Player 1" : allFormElems[0].value;
-        const username2 = allFormElems[1].value === "" ? "Player 2" : allFormElems[1].value;
-        const gameMode = allFormElems[2].value;
-        changeDisplayProperty(initialModalScreen, "none");
-        changeDisplayProperty(mainScreen, "block");
-        Game.initGame(username1, username2, gameMode);
-    });
+    DisplayController.displayInit();
 }
 
 run();
