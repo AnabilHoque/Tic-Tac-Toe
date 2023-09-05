@@ -70,6 +70,7 @@ const DisplayController = (() => {
         const gameMode = allFormElems[2].value;
         activateMain();
         Game.initGame(username1, username2, gameMode);
+        form.reset();
     }
 
     const resetDisplayAndLogic = () => {
