@@ -67,13 +67,20 @@ const DisplayController = (() => {
         const allFormElems = form.elements;
         const username1 = allFormElems[0].value === "" ? "Player 1" : allFormElems[0].value;
         const username2 = allFormElems[1].value === "" ? "Player 2" : allFormElems[1].value;
-        const gameMode = allFormElems[2].value;
+        let gameMode;
+        for (let i = 2; i < 5; i++) {
+            if (allFormElems[i].checked) {
+                gameMode = allFormElems[i].value;
+            }
+        }
         activateMain();
         Game.initGame(username1, username2, gameMode);
         form.reset();
     }
 
     const resetDisplayAndLogic = () => {
+        let h2ElemDisplay = document.querySelector(".turn-text");
+        h2ElemDisplay.innerHTML = "It's <span></span>'s turn - <span></span>.";
         Game.restartGame();
         activateForm();
     }
@@ -124,11 +131,16 @@ const Game = (() => {
     let players;
     let currPlayerIdx;
     let isGameOver;
+    let gameType;
 
     const initGame = (name1, name2, gameMode) => {
         currPlayerIdx = 0;
         isGameOver = false;
+        gameType = gameMode;
         let randomSymbols = randomiseSymbols();
+        if (gameType == "hvAIeasy" || gameType == "hvAIhard") {
+            name2 = name2 + " AI";
+        }
         players = [Player(name1, randomSymbols[0]), Player(name2, randomSymbols[1])];
         renderTurnText(players[currPlayerIdx]);
         Gameboard.renderGameboard();
@@ -171,25 +183,70 @@ const Game = (() => {
 
     const checkTie = (gameboard) => {
         return gameboard.every(cell => cell !== "");
-    }
+    };
+    
+    const getAvailable = () => {
+        let available = [];
+        for (let i = 0; i < 9; i++) {
+            if (Gameboard.getGameboard()[i] === "") {
+                available.push(i);
+            }
+        }
+        return available;
+    };
+
+    const handleEasyAI = () => {
+        let available = getAvailable();
+        let choice = available[Math.floor(Math.random() * available.length)];
+        Gameboard.updateGameboard(choice, players[currPlayerIdx].getSymbol());
+        checkGameEnded();
+        currPlayerIdx = (currPlayerIdx + 1) % 2;
+        renderTurnText(players[currPlayerIdx]);
+
+    };
+
+    const checkGameEnded = () => {
+        if (checkWin(Gameboard.getGameboard())) {
+            isGameOver = true;
+            let h2ElemDisplay = document.querySelector(".turn-text");
+            h2ElemDisplay.innerHTML = "Game Finished";
+            setTimeout(() => {
+                DisplayController.renderResultMessage(players[0], players[1], currPlayerIdx);
+            }, 2500);
+            return true;
+        } else if (checkTie(Gameboard.getGameboard())) {
+            isGameOver = true;
+            let h2ElemDisplay = document.querySelector(".turn-text");
+            h2ElemDisplay.innerHTML = "Game Finished";
+            setTimeout(() => {
+                DisplayController.renderResultMessage(players[0], players[1], -1);
+            }, 2500);
+            return true;
+        }
+        return false;
+    };
 
     const handleClick = (event) => {
         if (isGameOver) {
             return;
         }
+
         const cellID = event.target.id;
         const cellIdx = parseInt(cellID.split("-")[1]);
         if (Gameboard.getGameboard()[cellIdx] === "") {
             Gameboard.updateGameboard(cellIdx, players[currPlayerIdx].getSymbol());
-            if (checkWin(Gameboard.getGameboard())) {
-                DisplayController.renderResultMessage(players[0], players[1], currPlayerIdx);
-                isGameOver = true;
-            } else if (checkTie(Gameboard.getGameboard())) {
-                DisplayController.renderResultMessage(players[0], players[1], -1);
-                isGameOver = true;
-            }
+            if (checkGameEnded()) {
+                return;
+            };
             currPlayerIdx = (currPlayerIdx + 1) % 2;
             renderTurnText(players[currPlayerIdx]);
+        }
+        if (!isGameOver && currPlayerIdx % 2 === 1 && (gameType === "hvAIeasy" || gameType === "hvAIhard")) {
+            if (gameType == "hvAIeasy") {
+                handleEasyAI();
+            } else {
+                handleHardAI();
+            }
         }
     };
 
