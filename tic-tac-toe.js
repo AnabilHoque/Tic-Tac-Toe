@@ -127,11 +127,11 @@ const DisplayController = (() => {
 
 // Game Module
 const Game = (() => {
-    let possibleSymbols = ["X", "O"];
     let players;
     let currPlayerIdx;
     let isGameOver;
     let gameType;
+    let aiPlayerIdx; // used for easy AI and hard AI, keeps track of the index at which the player is in
     const winConditions = [
         [0, 1, 2],
         [3, 4, 5],
@@ -147,21 +147,38 @@ const Game = (() => {
         currPlayerIdx = 0;
         isGameOver = false;
         gameType = gameMode;
-        let randomSymbols = randomiseSymbols();
         if (gameType == "hvAIeasy" || gameType == "hvAIhard") {
             name2 = name2 + " AI";
         }
-        players = [Player(name1, randomSymbols[0]), Player(name2, randomSymbols[1])];
+        players = randomisePlayers(name1, name2); // i.e., who starts and what symbol they start with is random
+        if (gameType == "hvAIeasy" || gameType == "hvAIhard") {
+            // find which index corresponds to AI player
+            if (players[0].getName().endsWith("AI")) {
+                aiPlayerIdx = 0;
+            } else {
+                aiPlayerIdx = 1;
+            }
+        }
         renderTurnText(players[currPlayerIdx]);
         Gameboard.renderGameboard();
+        if (aiPlayerIdx === 0) {
+            if (gameType === "hvAIeasy") {
+                handleEasyAI();
+            } else {
+                handleHardAI();
+            }
+        }
     };
 
-    const randomiseSymbols = () => {
-        let player1Idx = Math.floor(Math.random() * 2);
-        let player1Symbol = possibleSymbols[player1Idx];
-        let player2Symbol = player1Symbol === "X" ? "O" : "X";
-        return [player1Symbol, player2Symbol]; 
-    };
+    const randomisePlayers = (name1, name2) => {
+        let possibleSymbols = ["X", "O"];
+        let names = [name1, name2];
+        let randomSymbo1Idx = Math.floor(Math.random() * 2);
+        let randomName1Idx = Math.floor(Math.random() * 2);
+        let randomSymbo2Idx = (randomSymbo1Idx + 1) % 2;
+        let randomName2Idx = (randomName1Idx + 1) % 2;
+        return [Player(names[randomName1Idx], possibleSymbols[randomSymbo1Idx]), Player(names[randomName2Idx], possibleSymbols[randomSymbo2Idx])];
+    }
 
     const renderTurnText = (player) => {
         if (isGameOver) {
@@ -200,13 +217,12 @@ const Game = (() => {
     const handleEasyAI = () => {
         let available = getAvailable();
         let choice = available[Math.floor(Math.random() * available.length)];
-        Gameboard.updateGameboard(choice, players[currPlayerIdx].getSymbol());
+        Gameboard.updateGameboard(choice, players[aiPlayerIdx].getSymbol());
         if (checkGameEnded()) {
             return;
         }
         currPlayerIdx = (currPlayerIdx + 1) % 2;
         renderTurnText(players[currPlayerIdx]);
-
     };
 
     const handleHardAI = () => {
@@ -218,7 +234,7 @@ const Game = (() => {
         let bestMove;
         for (let i = 0; i < 9; i++) {
             if (gameboardCopy[i] === "") {
-                gameboardCopy[i] = players[1].getSymbol();
+                gameboardCopy[i] = players[aiPlayerIdx].getSymbol();
                 let score = minmax(gameboardCopy, 0, false);
                 gameboardCopy[i] = "";
                 if (score > bestScore) {
@@ -227,7 +243,7 @@ const Game = (() => {
                 }
             }
         }
-        Gameboard.updateGameboard(bestMove, players[1].getSymbol());
+        Gameboard.updateGameboard(bestMove, players[aiPlayerIdx].getSymbol());
         if (checkGameEnded()) {
             return;
         }
@@ -237,8 +253,8 @@ const Game = (() => {
 
     const checkResult = (board) => {
         // check result with respect to ai player i.e., player 2
-        let aiSymbol = players[1].getSymbol();
-        let humanSymbol = players[0].getSymbol();
+        let aiSymbol = players[aiPlayerIdx].getSymbol();
+        let humanSymbol = players[(aiPlayerIdx + 1) % 2].getSymbol();
         for (let i = 0; i < winConditions.length; i++) {
             let [x, y, z] = winConditions[i];
             if (board[x] === aiSymbol && board[x] === board[y] && board[y] === board[z]) {
@@ -267,9 +283,9 @@ const Game = (() => {
         if (isMaximising) {
             let bestScore = -Infinity;
             for (let i = 0; i < 9; i++) {
-                // Is cell available
+                // Is cell available?
                 if (board[i] === "") {
-                    board[i] = players[1].getSymbol();
+                    board[i] = players[aiPlayerIdx].getSymbol();
                     let score = minmax(board, depth+1, false);
                     board[i] = "";
                     bestScore = Math.max(score, bestScore);
@@ -280,9 +296,9 @@ const Game = (() => {
             // Minimising player
             let bestScore = Infinity;
             for (let i = 0; i < 9; i++) {
-                // Is cell available
+                // Is cell available?
                 if (board[i] === "") {
-                    board[i] = players[0].getSymbol();
+                    board[i] = players[(aiPlayerIdx + 1) % 2].getSymbol();
                     let score = minmax(board, depth+1, true);
                     board[i] = "";
                     bestScore = Math.min(score, bestScore);
@@ -296,7 +312,7 @@ const Game = (() => {
         if (checkWin(Gameboard.getGameboard())) {
             isGameOver = true;
             let h2ElemDisplay = document.querySelector(".turn-text");
-            h2ElemDisplay.innerHTML = "Game Finished";
+            h2ElemDisplay.innerHTML = `Game Finished! Winner is ${players[currPlayerIdx].getName()} - ${players[currPlayerIdx].getSymbol()}!`;
             setTimeout(() => {
                 DisplayController.renderResultMessage(players[0], players[1], currPlayerIdx);
             }, 2500);
@@ -304,7 +320,7 @@ const Game = (() => {
         } else if (checkTie(Gameboard.getGameboard())) {
             isGameOver = true;
             let h2ElemDisplay = document.querySelector(".turn-text");
-            h2ElemDisplay.innerHTML = "Game Finished";
+            h2ElemDisplay.innerHTML = "Game Finished! It's a tie!";
             setTimeout(() => {
                 DisplayController.renderResultMessage(players[0], players[1], -1);
             }, 2500);
@@ -328,7 +344,7 @@ const Game = (() => {
             currPlayerIdx = (currPlayerIdx + 1) % 2;
             renderTurnText(players[currPlayerIdx]);
         }
-        if (!isGameOver && currPlayerIdx % 2 === 1 && (gameType === "hvAIeasy" || gameType === "hvAIhard")) {
+        if (!isGameOver && (gameType === "hvAIeasy" || gameType === "hvAIhard") && currPlayerIdx === aiPlayerIdx) {
             if (gameType == "hvAIeasy") {
                 handleEasyAI();
             } else {
