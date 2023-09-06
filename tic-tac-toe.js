@@ -132,6 +132,16 @@ const Game = (() => {
     let currPlayerIdx;
     let isGameOver;
     let gameType;
+    const winConditions = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+    ];
 
     const initGame = (name1, name2, gameMode) => {
         currPlayerIdx = 0;
@@ -154,6 +164,9 @@ const Game = (() => {
     };
 
     const renderTurnText = (player) => {
+        if (isGameOver) {
+            return;
+        }
         const spanElems = document.querySelectorAll(".turn-text span");
         let [nameSpan, symbolSpan] = spanElems;
         nameSpan.textContent = player.getName();
@@ -161,17 +174,6 @@ const Game = (() => {
     };
 
     const checkWin = (gameboard) => {
-        const winConditions = [
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8],
-            [0, 3, 6],
-            [1, 4, 7],
-            [2, 5, 8],
-            [0, 4, 8],
-            [2, 4, 6],
-        ];
-
         for (let i = 0; i < winConditions.length; i++) {
             let [x, y, z] = winConditions[i];
             if (gameboard[x] && gameboard[x] === gameboard[y] && gameboard[y] === gameboard[z]) {
@@ -199,10 +201,95 @@ const Game = (() => {
         let available = getAvailable();
         let choice = available[Math.floor(Math.random() * available.length)];
         Gameboard.updateGameboard(choice, players[currPlayerIdx].getSymbol());
-        checkGameEnded();
+        if (checkGameEnded()) {
+            return;
+        }
         currPlayerIdx = (currPlayerIdx + 1) % 2;
         renderTurnText(players[currPlayerIdx]);
 
+    };
+
+    const handleHardAI = () => {
+        // We apply the Minmax Algorithm, assumes player 1 will play optimally
+        // player 2 (AI) is the maximising player, index 1
+        // player 1 (Human) is the minimising player, index 0
+        let bestScore = -Infinity;
+        let gameboardCopy = [...Gameboard.getGameboard()];
+        let bestMove;
+        for (let i = 0; i < 9; i++) {
+            if (gameboardCopy[i] === "") {
+                gameboardCopy[i] = players[1].getSymbol();
+                let score = minmax(gameboardCopy, 0, false);
+                gameboardCopy[i] = "";
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = i;
+                }
+            }
+        }
+        Gameboard.updateGameboard(bestMove, players[1].getSymbol());
+        if (checkGameEnded()) {
+            return;
+        }
+        currPlayerIdx = (currPlayerIdx + 1) % 2;
+        renderTurnText(players[currPlayerIdx]);
+    };
+
+    const checkResult = (board) => {
+        // check result with respect to ai player i.e., player 2
+        let aiSymbol = players[1].getSymbol();
+        let humanSymbol = players[0].getSymbol();
+        for (let i = 0; i < winConditions.length; i++) {
+            let [x, y, z] = winConditions[i];
+            if (board[x] === aiSymbol && board[x] === board[y] && board[y] === board[z]) {
+                // AI wins -> score = 1
+                return 1;
+            }
+            if (board[x] === humanSymbol && board[x] === board[y] && board[y] === board[z]) {
+                // AI loses -> -1
+                return -1;
+            }
+        }
+        // Tie -> score = 0
+        if (checkTie(board)) {
+            return 0;
+        }
+        // No result
+        return null;
+    };
+
+    const minmax = (board, depth, isMaximising) => {
+        let result = checkResult(board);
+        if (result !== null) {
+            return result;
+        }
+
+        if (isMaximising) {
+            let bestScore = -Infinity;
+            for (let i = 0; i < 9; i++) {
+                // Is cell available
+                if (board[i] === "") {
+                    board[i] = players[1].getSymbol();
+                    let score = minmax(board, depth+1, false);
+                    board[i] = "";
+                    bestScore = Math.max(score, bestScore);
+                }
+            }
+            return bestScore;
+        } else {
+            // Minimising player
+            let bestScore = Infinity;
+            for (let i = 0; i < 9; i++) {
+                // Is cell available
+                if (board[i] === "") {
+                    board[i] = players[0].getSymbol();
+                    let score = minmax(board, depth+1, true);
+                    board[i] = "";
+                    bestScore = Math.min(score, bestScore);
+                }
+            }
+            return bestScore;
+        }
     };
 
     const checkGameEnded = () => {
