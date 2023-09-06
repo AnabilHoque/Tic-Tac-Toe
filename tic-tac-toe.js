@@ -112,7 +112,7 @@ const DisplayController = (() => {
         let resultMessage = document.querySelector("#result-message");
         matchText.textContent = `${player1.getName()} - ${player1.getSymbol()} vs ${player2.getName()} - ${player2.getSymbol()}`;
         if (winnerArgIdx === -1) {
-            resultMessage.textContent = "It is a tie!";
+            resultMessage.textContent = "It's a tie!";
         } else if (winnerArgIdx === 0 || winnerArgIdx === 1) {
             resultMessage.textContent = winnerArgIdx === 0 ? `${player1.getName()} - ${player1.getSymbol()} wins!` : `${player2.getName()} - ${player2.getSymbol()} wins!`;
         }

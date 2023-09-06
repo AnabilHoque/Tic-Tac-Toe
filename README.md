@@ -4,4 +4,4 @@ Resources:
 * [Tic Tac Toe icon created by Freepik - Flaticon](https://www.flaticon.com/free-icons/tic-tac-toe)
 * [Wall background by NordWood Themes - Unsplash](https://unsplash.com/@nordwood?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
 
-Live Demo :point_left: (to be added)
+[Live Demo](https://anabilhoque.github.io/Tic-Tac-Toe/) :point_left:
