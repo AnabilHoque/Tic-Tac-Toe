@@ -90,9 +90,14 @@ body {
     outline: none;
     width: 250px;
     font-size: 18px;
+    border: 2px solid black;
 }
 
-.initial-modal-screen form div:nth-child(5), .initial-modal-screen form div:nth-child(6), .initial-modal-screen form div:nth-child(7){
+.initial-modal-screen form input[type="text"]:focus {
+    border-color: #5271ff;
+}
+
+.initial-modal-screen form div:nth-child(5), .initial-modal-screen form div:nth-child(6), .initial-modal-screen form div:nth-child(7) {
     display: flex;
     justify-content: space-between;
 }
@@ -105,8 +110,14 @@ body {
 .initial-modal-screen form button {
     width: 30%;
     height: 32px;
-    font-size: medium;
+    font-size: large;
     cursor: pointer;
+    background-color: #27315b;
+    border-radius: 12px;
+}
+
+.initial-modal-screen form button:hover {
+    transform: scale(1.05);
 }
 
 /* Main Screen */
@@ -160,39 +171,39 @@ main {
 }
 
 .gameboard > div:nth-child(1) {
-    border-top-width: 4px;
-    border-left-width: 4px;
+    border-top-width: 0px;
+    border-left-width: 0px;
 }
 
 .gameboard > div:nth-child(2) {
-    border-top-width: 4px;
+    border-top-width: 0px;
 }
 
 .gameboard > div:nth-child(3) {
-    border-top-width: 4px;
-    border-right-width: 4px;
+    border-top-width: 0px;
+    border-right-width: 0px;
 }
 
 .gameboard > div:nth-child(4) {
-    border-left-width: 4px;
+    border-left-width: 0px;
 }
 
 .gameboard > div:nth-child(6) {
-    border-right-width: 4px;
+    border-right-width: 0px;
 }
 
 .gameboard > div:nth-child(7) {
-    border-bottom-width: 4px;
-    border-left-width: 4px;
+    border-bottom-width: 0px;
+    border-left-width: 0px;
 }
 
 .gameboard > div:nth-child(8) {
-    border-bottom-width: 4px;
+    border-bottom-width: 0px;
 }
 
 .gameboard > div:nth-child(9) {
-    border-bottom-width: 4px;
-    border-right-width: 4px;
+    border-bottom-width: 0px;
+    border-right-width: 0px;
 }
 
 /* Result Modal Screen */
@@ -208,9 +219,10 @@ main {
 }
 
 .result-modal-screen .message {
+    text-align: center;
     margin: 5% auto;
     padding: 40px 80px;
-    min-height: 60%;
+    min-height: 45%;
     width: -moz-fit-content;
     width: fit-content;
     border: 0.5rem solid #fff;
@@ -221,6 +233,27 @@ main {
                 0 0 0.2rem #5271ff,
                 0 0 2.2rem #5271ff,
                 inset 0 0 1rem #5271ff;
+}
+
+#match-text {
+    font-size: 38px;
+}
+
+#result-message {
+    font-size: 36px;
+}
+
+.result-modal-screen .message button {
+    width: 30%;
+    height: 32px;
+    font-size: large;
+    cursor: pointer;
+    background-color: #27315b;
+    border-radius: 12px;
+}
+
+.result-modal-screen .message button:hover {
+    transform: scale(1.05);
 }
 
 /* Footer */
